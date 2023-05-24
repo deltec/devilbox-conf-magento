@@ -1,0 +1,40 @@
+# vim: set ft=yaml:
+---
+version: '2.3'
+
+###
+### Services
+###
+services:
+
+  # -----------------------------------------------------------------------------------------------
+  # PHP Community image
+  # -----------------------------------------------------------------------------------------------
+  php:
+    image: devilbox/php-fpm-community:${PHP_SERVER}-${PHP_COMMUNITY_FLAVOUR:-devilbox}
+
+
+
+
+  # -----------------------------------------------------------------------------------------------
+  # ELK Stack
+  # -----------------------------------------------------------------------------------------------
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:${ELK_SERVER:-6.6.1}
+    hostname: elastic
+    ports:
+      - "${LOCAL_LISTEN_ADDR}${HOST_PORT_ELK_ELASTIC:-9200}:9200"
+    networks:
+      app_net:
+        ipv4_address: ${IP_STACK}.16.238.240
+    environment:
+      - TZ=${TIMEZONE:-UTC}
+      - discovery.type=single-node
+    volumes:
+      - devilbox-elastic:/usr/share/elasticsearch/data
+
+###
+### Volumes
+###
+volumes:
+  devilbox-elastic:
